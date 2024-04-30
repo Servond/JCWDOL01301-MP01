@@ -19,3 +19,82 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+
+model User {
+  id                Int      @id @default(autoincrement())
+  name              String   @unique
+  email             String   @unique
+  password          String
+  avatar            String?
+  referral_code     String   @unique @db.VarChar(8)
+  referral_points   Int      @default(0)
+  role              Role     @relation(fields: [roleId], references: [id])
+  roleId            Int      @default(1)
+  registration_date DateTime
+  is_active         Boolean
+  coupon            Coupon[]
+  Event             Event[]
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  user User[]
+}
+
+model Coupon {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  code        String   @unique @db.VarChar(6)
+  discount    Int
+  used        Boolean  @default(false)
+  expiry_date DateTime
+}
+
+model Event {
+  id              Int           @id @default(autoincrement())
+  name            String        @unique
+  description     String
+  image           String
+  location        String
+  created_by      User          @relation(fields: [userId], references: [id])
+  userId          Int
+  created_date    DateTime      @default(now())
+  is_active       Boolean       @default(true)
+  available_seats Int
+  start_date      DateTime
+  end_date        DateTime
+  createdAt       DateTime
+  event_category  Category      @relation(fields: [categoryId], references: [id])
+  categoryId      Int
+  ticket_type     Ticket_Type[]
+  promotion       Promotion     @relation(fields: [promotionId], references: [id])
+  promotionId     Int
+}
+
+model Promotion {
+  id             Int      @id @default(autoincrement())
+  promotion_name String   @unique
+  discount       Int
+  usage_limit    Int
+  start_date     DateTime
+  end_date       DateTime
+  Event          Event[]
+}
+
+model Category {
+  id    Int     @id @default(autoincrement())
+  name  String
+  event Event[]
+}
+
+model Ticket_Type {
+  id               Int    @id @default(autoincrement())
+  event_id         Int
+  event            Event? @relation(fields: [event_id], references: [id])
+  name             String @unique
+  price            Int
+  description      String
+  available_ticket Int
+}
