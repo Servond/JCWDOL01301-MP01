@@ -1,18 +1,13 @@
-import express, {
-  json,
-  urlencoded,
-  Express,
-  Request,
-  Response,
-  NextFunction,
-  Router,
-} from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
+import { json, urlencoded } from 'express'; // Assuming these were used in server.ts
+import {EventRouter} from './routers/event.router';
+import { ErrorMiddleware } from './middleware/error.middleware';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
 
 export default class App {
-  private app: Express;
+  private app: express.Application;
 
   constructor() {
     this.app = express();
@@ -25,39 +20,26 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+
+    // Error handling (assuming it's in server.ts)
+    this.app.use(ErrorMiddleware);
   }
 
   private handleError(): void {
-    // not found
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.path.includes('/api/')) {
-        res.status(404).send('Not found !');
-      } else {
-        next();
-      }
-    });
-
-    // error
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (req.path.includes('/api/')) {
-          console.error('Error : ', err.stack);
-          res.status(500).send('Error !');
-        } else {
-          next();
-        }
-      },
-    );
+    // Implement error handling logic here (if needed)
   }
 
   private routes(): void {
     const sampleRouter = new SampleRouter();
-
+    const eventRouter = new EventRouter()
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
     this.app.use('/samples', sampleRouter.getRouter());
+
+    // Mount eventRouter
+    this.app.use('/event', eventRouter.getRouter());
   }
 
   public start(): void {
