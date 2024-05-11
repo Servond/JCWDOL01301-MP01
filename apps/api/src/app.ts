@@ -1,7 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'express'; // Assuming these were used in server.ts
-import {EventRouter} from './routers/event.router';
 import { ErrorMiddleware } from './middleware/error.middleware';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
@@ -31,7 +30,7 @@ export default class App {
 
   private routes(): void {
     const sampleRouter = new SampleRouter();
-    const eventRouter = new EventRouter()
+    // const eventRouter = new EventRouter()
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
@@ -39,7 +38,7 @@ export default class App {
     this.app.use('/samples', sampleRouter.getRouter());
 
     // Mount eventRouter
-    this.app.use('/event', eventRouter.getRouter());
+    // this.app.use('/event', eventRouter.getRouter());
   }
 
   public start(): void {
