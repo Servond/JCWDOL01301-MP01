@@ -1,7 +1,7 @@
 export interface Auth {
-    name?: string
+    name: string;
     email: string;
     password: string;
-    referralCode?: string
+    referral_code?: string
   }
   

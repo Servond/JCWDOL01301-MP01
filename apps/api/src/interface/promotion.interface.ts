@@ -1,4 +1,4 @@
-export interface IPromotion {
+export interface Promotion {
     promotion_name: string;
     discount: number;
     usage_limit: number;

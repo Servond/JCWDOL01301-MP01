@@ -5,18 +5,16 @@ import { Router } from "express";
 export class AuthRoute {
     private router: Router;
     private Auth: AuthController;
-    // private Guard: AuthMiddleware;
 
     constructor() {
       this.Auth = new AuthController();
       this.router = Router();
-    // this.Guard = new AuthMiddleware();
       this.initializeRoutes();
     }
 
     private initializeRoutes(): void {
-        this.router.post('/register', this.Auth.registerController)
-        this.router.post('/login', this.Auth.loginController)
+        this.router.post('/register', this.Auth.registration)
+        this.router.post('/login', this.Auth.login)
       }
 
       getRouter(): Router {
