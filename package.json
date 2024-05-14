@@ -30,5 +30,10 @@
     "hooks": {
       "pre-commit": "npx lint-staged"
     }
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.2.4",
+    "react-redux": "^9.1.2",
+    "reflect-metadata": "^0.2.2"
   }
 }

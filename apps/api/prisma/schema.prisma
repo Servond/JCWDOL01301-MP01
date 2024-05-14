@@ -29,7 +29,7 @@ model User {
   isVerified      Boolean
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  referral_code   String   @unique @db.VarChar(8)
+  referral_code   String?  @unique @db.VarChar(8)
   referral_points Int      @default(0)
   role            Role     @relation(fields: [roleId], references: [id])
   roleId          Int      @default(1)
