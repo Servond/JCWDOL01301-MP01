@@ -18,7 +18,7 @@ const generateReferralCode = (length = 8) => {
 
 export class AuthController {
     async registration(req: Request, res: Response ){
-        const { name, email, password, referral_code } = req.body
+        const { name, email, password } = req.body
 
         const existingUser = await prisma.user.findFirst({
             where: {
@@ -82,7 +82,7 @@ export class AuthController {
             })
           } catch (err) {
             res.status(500).json({
-                message: "error minaa",
+                message: "SALAH PASSWORD WOY",
                 err
             })
           }
