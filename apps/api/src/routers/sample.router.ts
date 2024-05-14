@@ -21,3 +21,29 @@ export class SampleRouter {
     return this.router;
   }
 }
+
+// public createTodoQuery = async (
+//   userId: number,
+//   task: string
+// ): Promise<Todo> => {
+//   try {
+//     const t = await prisma.$transaction(async (prisma) => {
+//       try {
+//         const todo = await prisma.todos.create({
+//           data: {
+//             userId,
+//             task: task.toUpperCase(),
+//             isCompleted: false,
+//           },
+//         });
+
+//         return todo;
+//       } catch (err) {
+//         throw err;
+//       }
+//     });
+//     return t;
+//   } catch (err) {
+//     throw err;
+//   }
+// };

@@ -12,3 +12,5 @@ config({ path: resolve(__dirname, `../${envFile}.local`), override: true });
 
 export const PORT = process.env.PORT || 8000;
 export const DATABASE_URL = process.env.DATABASE_URL || '';
+export const { API_PORT, API_KEY, FE_URL, NODEMAILER_EMAIL, NODEMAILER_PASS } =
+  process.env;

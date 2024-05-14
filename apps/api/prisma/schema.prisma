@@ -21,19 +21,22 @@ model Sample {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  name              String   @unique
-  email             String   @unique
-  password          String
-  avatar            String?
-  referral_code     String   @unique @db.VarChar(8)
-  referral_points   Int      @default(0)
-  role              Role     @relation(fields: [roleId], references: [id])
-  roleId            Int      @default(1)
-  registration_date DateTime
-  is_active         Boolean
-  coupon            Coupon[]
-  Event             Event[]
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  email           String   @unique
+  password        String
+  avatar          String?
+  isVerified      Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  referral_code   String   @unique
+  referral_points Int      @default(0)
+  role            Role     @relation(fields: [roleId], references: [id])
+  roleId          Int      @default(1)
+  coupon          Coupon[]
+  Event           Event[]
+
+  @@map("user")
 }
 
 model Role {
@@ -65,23 +68,24 @@ model Event {
   available_seats Int
   start_date      DateTime
   end_date        DateTime
-  createdAt       DateTime
   event_category  Category      @relation(fields: [categoryId], references: [id])
   categoryId      Int
   ticket_type     Ticket_Type[]
-  promotion       Promotion     @relation(fields: [promotionId], references: [id])
-  promotionId     Int
+  // promotion       Promotion     @relation(fields: [promotionId], references: [id])
+  // promotionId     Int
+
+  @@map("event")
 }
 
-model Promotion {
-  id             Int      @id @default(autoincrement())
-  promotion_name String   @unique
-  discount       Int
-  usage_limit    Int
-  start_date     DateTime
-  end_date       DateTime
-  Event          Event[]
-}
+// model Promotion {
+//   id             Int      @id @default(autoincrement())
+//   promotion_name String   @unique
+//   discount       Int
+//   usage_limit    Int
+//   start_date     DateTime
+//   end_date       DateTime
+//   Event          Event[]
+// }
 
 model Category {
   id    Int     @id @default(autoincrement())

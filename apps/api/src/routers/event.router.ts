@@ -1,25 +1,29 @@
+// import { SampleController } from '@/controllers/sample.controller';
 import { EventController } from '@/controllers/event.controller';
+import { AuthMiddleware } from '@/middleware/auth.middleware';
 import { Router } from 'express';
 
 export class EventRouter {
-    private router: Router;
-    private eventController: EventController;
+  private router: Router;
+  private eventController: EventController;
+  private Guard: AuthMiddleware;
 
-    constructor() {
-        this.eventController = new EventController();
-        this.router = Router();
-        this.initializeRoutes();
-    }
+  constructor() {
+    this.router = Router();
+    this.eventController = new EventController();
+    this.Guard = new AuthMiddleware();
+    this.initializeRoutes();
+  }
 
-    private initializeRoutes() {
-        this.router.get('/', this.eventController.getEventsData)
-        this.router.get('/:id', this.eventController.getEventDataById)
-        this.router.post('/', this.eventController.createEventData)
-        this.router.post("/promotion", this.eventController.createPromotion)
-      }
+  private initializeRoutes(): void {
+    this.router.get('/', this.Guard.verifyToken,this.eventController.getEventData);
+    this.router.get('/:id', this.Guard.verifyToken,this.eventController.getEventDataById);
+    this.router.post('/create', this.Guard.verifyToken,this.eventController.createEvent);
+    // this.router.post('/promotion', this.Guard.verifyToken,this.eventController.createPromotion);
+    
+  }
 
-      getRouter(): Router {
-        return this.router;
-      }
+  getRouter(): Router {
+    return this.router;
+  }
 }
-

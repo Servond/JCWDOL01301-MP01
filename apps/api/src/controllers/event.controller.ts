@@ -1,168 +1,97 @@
-
-import { EventAction, getEventAction } from "@/action/event.action";
-import prisma from "@/prisma";
-import { Request, Response, NextFunction } from "express";
-
-// const createEventController = async (
-//     req: Request,
-//     res: Response,
-//     next: NextFunction
-// ): Promise<void> => {
-//     try {
-//         const { 
-//             name,
-//             description,
-//             image,
-//             location,
-//             userId,
-//             created_date,
-//             is_active,
-//             available_seats,
-//             start_date,
-//             end_date,
-//             categoryId,
-//             promotionId
-//          } = req.body;
-
-//         const data = await createEventAction(
-//             name,
-//             description,
-//             image,
-//             location,
-//             userId,
-//             created_date,
-//             is_active,
-//             available_seats,
-//             start_date,
-//             end_date,
-//             categoryId,
-//             promotionId
-//         )
-
-//         res.status(200).json({
-//             message: "Create event success",
-//             data
-//         })
-//     } catch (error) {
-//         next(error)
-//     }
-// }
-
-// const getEventController = async (
-//     req: Request,
-//     res: Response,
-//     next: NextFunction
-//   ): Promise<void> => {
-//     try {
-//       const filters = req.query;
-  
-//       const data = await getEventAction(filters);
-  
-//       res.status(200).json({
-//         message: "Get Event Success",
-//         data,
-//       });
-//     } catch (err) {
-//       next(err);
-//     }
-//   };
-
-// const getEventController = async (
-//     req: Request,
-//     res: Response,
-//     next: NextFunction
-//   ): Promise<void> => {
-//     try {
-//       const { id } = req.params;
-//       const data = await getEventAction(Number(id));
-  
-//       res.status(200).json({
-//         message: "Get Event success",
-//         data,
-//       });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+import { NextFunction, Request, Response } from 'express';
+import prisma from '@/prisma';
+import { IPromotion } from '@/interface/promotion.interface';
+// import { Event } from '@/interface/event.interface';
 
 export class EventController {
-  eventAction: EventAction;
+  async getEventData(req: Request, res: Response) {
+    const eventData = await prisma.event.findMany();
 
-  constructor() {
-    this.eventAction = new EventAction()
+    return res.status(200).send(eventData);
   }
 
-  async getEventsData(
-    req: Request, 
-    res: Response, 
-    next: NextFunction
-  ) {
-    try {
-      const eventData = await prisma.event.findMany()  
+  async getEventDataById(req: Request, res: Response) {
+    const { id } = req.params;
 
-      res.status(200).json({
-        message: "Get Event success",
-        eventData,
-      });
-
-      return eventData
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getEventDataById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { id } = req.params
-    const data = await getEventAction(Number(id))
-
-
-    res.status(200).json({
-      message: "Get Event Success",
-      data,
+    const event = await prisma.event.findUnique({
+      where: { id: Number(id) },
     });
-    } catch (error) {
-      next(error)
+
+    if (!event) {
+      return res.status(404).json({message: "LAH KOK GA ADA"})
     }
+
+    return res.status(200).json({
+        message: "ada nih",
+        event
+    })
   }
 
-  async createEventData(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async createEvent(req: Request, res: Response): Promise<void> {
     try {
-      const data = await this.eventAction.createEventAction(req.body)
+      const {
+        name,
+        description,
+        image,
+        location,
+        available_seats,
+        start_date,
+        end_date,
+        categoryId,
+        userId
+      } = req.body;
+  
+      if (!userId) {
+        res.status(400).json({ message: "Missing user ID in request body" });
+      }
 
-      res.status(200).json({
-        message: "Succes Create Event",
-        data
-      })
-
+      const existingUser = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+  
+      if (!existingUser) {
+        res.status(400).json({ message: "Invalid user ID provided" });
+      }
+  
+      const newEvent = await prisma.event.create({
+        data: {
+          name,
+          description,
+          image,
+          location,
+          userId,
+          available_seats,
+          start_date: new Date(start_date),
+          end_date: new Date(end_date),
+          categoryId
+        },
+      });
+  
+      res.status(201).json({ message: "Berhasil membuat event", data: newEvent });
     } catch (error) {
-      next(error)
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
+  
+//   async createPromotion(data: IPromotion) {
+//     try {
+//       const { promotion_name, discount, usage_limit, start_date, end_date } = data;
 
-  async createPromotion(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const promotion = await this.eventAction.createPromotionAction(req.body)
-
-      res.send(200).json({
-        message: "Create promotion success",
-        promotion
-      })
-    } catch (error) {
-      console.log('tset')
-      next(error)
-    }
-  }
+//       const createPromotion = await prisma.promotion.create({
+//         data: {
+//           promotion_name,
+//           discount,
+//           usage_limit,
+//           start_date: new Date(start_date), 
+//           end_date: new Date(end_date),  
+//         },
+//       });
+  
+//       return createPromotion;
+//     } catch (error) {
+//       console.error(error);
+//       throw new Error('Internal server error'); 
+//     }
+//   }
 }
