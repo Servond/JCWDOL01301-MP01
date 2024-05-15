@@ -1,14 +1,15 @@
 'use client';
 
 import { ISample } from '@/interface/sample.interface';
+import instance from '@/utils/axiosInstance';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 function Samples(props: ISample) {
   const [data, setData] = useState([]);
   useEffect(() => {
-    axios
-      .get('http://localhost:8000/samples')
+    instance
+      .get('/samples/')
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -17,7 +18,7 @@ function Samples(props: ISample) {
     <div>
       <h1>FETCH DATA</h1>
       <div>
-        {data?.length > 0 && // Check if data is an array and has elements
+        {data?.length > 0 &&
           data.map((user, index) => (
             <div key={index}>
               <div>{user.id}</div>
